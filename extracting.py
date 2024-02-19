@@ -27,3 +27,29 @@ def extract_text(image):
 # Capture video from default camera
 cap = cv2.VideoCapture(0)
 
+while True:
+    # Read frame from camera
+    ret, frame = cap.read()
+    if not ret:
+        break
+    
+    # Extract text from the frame
+    extracted_text = extract_text(frame)
+    
+    # Store extracted text in database
+    c.execute("INSERT INTO extracted_text (text) VALUES (?)", (extracted_text,))
+    conn.commit()
+    
+    # Display the frame
+    cv2.imshow('Video', frame)
+    
+    # Press 'q' to exit
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# Release the camera and close all windows
+cap.release()
+cv2.destroyAllWindows()
+
+# Close database connection
+conn.close()
